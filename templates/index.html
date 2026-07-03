@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Last-Mile Tracker</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, select { display: block; margin: 10px 0; padding: 8px; width: 100%; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Last-Mile Delivery Portal</h1>
+
+    <div class="card">
+        <h3>Create New Order (Customer)</h3>
+        <input type="number" id="L" placeholder="Length (cm)">
+        <input type="number" id="B" placeholder="Width (cm)">
+        <input type="number" id="H" placeholder="Height (cm)">
+        <input type="number" id="weight" placeholder="Actual Weight (kg)">
+        <input type="text" id="p_pin" placeholder="Pickup Pincode (e.g. 110001)">
+        <input type="text" id="d_pin" placeholder="Drop Pincode (e.g. 110002)">
+        <select id="type"><option value="B2C">B2C</option><option value="B2B">B2B</option></select>
+        <select id="pay"><option value="Prepaid">Prepaid</option><option value="COD">COD</option></select>
+        <button onclick="placeOrder()">Calculate & Place Order</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        async function placeOrder() {
+            const data = {
+                user_id: 1, L: parseFloat(document.getElementById('L').value),
+                B: parseFloat(document.getElementById('B').value),
+                H: parseFloat(document.getElementById('H').value),
+                weight: parseFloat(document.getElementById('weight').value),
+                pickup_pin: document.getElementById('p_pin').value,
+                drop_pin: document.getElementById('d_pin').value,
+                type: document.getElementById('type').value,
+                payment: document.getElementById('pay').value
+            };
+            const response = await fetch('/create_order', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+            document.getElementById('result').innerText = "Order Placed! ID: " + res.order_id + " | Charge: ₹" + res.charge;
+        }
+    </script>
+</body>
+</html>
